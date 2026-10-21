@@ -1,0 +1,47 @@
+/* Casa da Qualidade (QFD) — impressão / PDF
+   As regras @page (papel, orientação e margens) são geradas em js/print.js */
+@media print {
+  /* Sempre o tema claro no papel; :not(#x) vence as regras do tema escuro */
+  :root:not(#x), :root[data-theme] {
+    --bg: #ffffff; --surface: #ffffff; --ink: #1c2822; --muted: #4f5f57; --line: #8fa69a; --grid: #cfdcd4;
+    --pine: #2e6a4e; --tint: #e9f1ec; --hi: #dcecdf; --hi2: #c6e2cf; --neg: #ad4430;
+    color-scheme: light;
+  }
+  html, body { background: #fff !important; }
+  body { font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body::before { display: none; }
+  .app, #modal, #toast { display: none !important; }
+  #print-root { display: block; }
+
+  .pg-matriz { page: matriz; }
+  .pg-itens { page: itens; }
+  .pg.brk { break-before: page; }
+
+  .ph { border-bottom: 1.2pt solid var(--pine); padding-bottom: 2.5mm; margin-bottom: 4mm; display: grid; grid-template-columns: 1fr auto; column-gap: 6mm; }
+  .ph-eyebrow { grid-column: 1 / -1; font-family: var(--f-mono); font-size: 7.5pt; letter-spacing: .08em; text-transform: uppercase; color: var(--pine); }
+  .ph-title { font-size: 13pt; font-weight: 700; }
+  .ph-meta { font-size: 9pt; color: var(--muted); align-self: end; }
+  .p-house { display: flex; justify-content: center; }
+  .p-house svg { display: block; }
+  .pf { margin-top: 2mm; font-size: 8pt; color: var(--muted); text-align: center; }
+
+  .analysis.print { display: block; }
+  .analysis.print .sec { margin-bottom: 7mm; }
+  .analysis.print .sec h2 { font-size: 12.5pt; break-after: avoid; }
+  .analysis.print .sec h2 small { font-size: 7.5pt; }
+  .analysis.print h3 { font-size: 10.5pt; break-after: avoid; }
+  .analysis.print p, .analysis.print li { font-size: 9.5pt; max-width: none; }
+  .analysis.print table { font-size: 9pt; }
+  .analysis.print th { font-size: 7.5pt; }
+  .analysis.print td.f, .analysis.print td.k { font-size: 8.5pt; }
+  .analysis.print th, .analysis.print td { padding: 1.6mm 2mm; }
+  .analysis.print .tbl { overflow: visible; break-inside: avoid; }
+  .analysis.print .sec > p:first-of-type, .analysis.print h3.sub { break-after: avoid; }
+  .analysis.print .pill { font-size: 8pt; }
+  .analysis.print .rel li > span { font-size: 9pt; }
+  .analysis.print tr, .analysis.print li, .analysis.print .card, .analysis.print .callout, .analysis.print .notes { break-inside: avoid; }
+  .analysis.print .cards { grid-template-columns: repeat(auto-fit, minmax(52mm, 1fr)); gap: 3mm; }
+  .analysis.print .card { padding: 3mm; }
+  .analysis.print .cols2 { grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .analysis.print .callout { font-size: 9.5pt; }
+}

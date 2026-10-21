@@ -1,0 +1,181 @@
+{
+  "app": "casa-da-qualidade-qfd",
+  "version": 1,
+  "meta": {
+    "title": "Nova garrafa térmica reutilizável",
+    "subtitle": "Administração da Produção · Desdobramento da Função Qualidade (QFD)",
+    "author": ""
+  },
+  "scale": {
+    "s": 9,
+    "m": 3,
+    "w": 1,
+    "impMax": 5,
+    "benchMax": 5
+  },
+  "settings": {
+    "topN": 3
+  },
+  "reqs": [
+    {
+      "id": "r1",
+      "name": "Manter a bebida quente por várias horas",
+      "imp": 5
+    },
+    {
+      "id": "r2",
+      "name": "Ter preço acessível",
+      "imp": 4
+    },
+    {
+      "id": "r3",
+      "name": "Ser leve para transportar",
+      "imp": 4
+    },
+    {
+      "id": "r4",
+      "name": "Ser resistente a quedas",
+      "imp": 5
+    },
+    {
+      "id": "r5",
+      "name": "Ser fácil de limpar",
+      "imp": 3
+    },
+    {
+      "id": "r6",
+      "name": "Não apresentar vazamentos",
+      "imp": 5
+    }
+  ],
+  "chars": [
+    {
+      "id": "c1",
+      "name": "Capacidade de isolamento térmico",
+      "dir": "up"
+    },
+    {
+      "id": "c2",
+      "name": "Custo de produção",
+      "dir": "down"
+    },
+    {
+      "id": "c3",
+      "name": "Peso da garrafa",
+      "dir": "down"
+    },
+    {
+      "id": "c4",
+      "name": "Resistência do material",
+      "dir": "up"
+    },
+    {
+      "id": "c5",
+      "name": "Diâmetro da abertura",
+      "dir": "up"
+    },
+    {
+      "id": "c6",
+      "name": "Sistema de vedação",
+      "dir": "up"
+    }
+  ],
+  "comps": [
+    {
+      "id": "pa",
+      "name": "Produto A"
+    },
+    {
+      "id": "pb",
+      "name": "Produto B"
+    },
+    {
+      "id": "pc",
+      "name": "Produto C"
+    }
+  ],
+  "rel": {
+    "r1": {
+      "c1": "s",
+      "c5": "m",
+      "c6": "s"
+    },
+    "r2": {
+      "c1": "m",
+      "c2": "s",
+      "c3": "w",
+      "c4": "m",
+      "c6": "w"
+    },
+    "r3": {
+      "c1": "m",
+      "c3": "s",
+      "c4": "m"
+    },
+    "r4": {
+      "c3": "w",
+      "c4": "s",
+      "c6": "w"
+    },
+    "r5": {
+      "c5": "s",
+      "c6": "m"
+    },
+    "r6": {
+      "c4": "w",
+      "c5": "m",
+      "c6": "s"
+    }
+  },
+  "corr": {
+    "c1|c2": "-",
+    "c1|c3": "-",
+    "c1|c4": "+",
+    "c1|c5": "--",
+    "c1|c6": "++",
+    "c2|c3": "-",
+    "c2|c4": "-",
+    "c2|c6": "-",
+    "c3|c4": "-",
+    "c4|c6": "+",
+    "c5|c6": "-"
+  },
+  "bench": {
+    "r1": {
+      "pa": 5,
+      "pb": 3,
+      "pc": 4
+    },
+    "r2": {
+      "pa": 2,
+      "pb": 5,
+      "pc": 3
+    },
+    "r3": {
+      "pa": 3,
+      "pb": 4,
+      "pc": 3
+    },
+    "r4": {
+      "pa": 4,
+      "pb": 3,
+      "pc": 5
+    },
+    "r5": {
+      "pa": 3,
+      "pb": 5,
+      "pc": 4
+    },
+    "r6": {
+      "pa": 5,
+      "pb": 3,
+      "pc": 4
+    }
+  },
+  "notes": {
+    "rel": "- **Manter a bebida quente:** o isolamento (C1) é o que segura a temperatura e a tampa (C6) é por onde mais se perde calor; abertura larga (C5) troca mais calor com o ar.\n- **Preço acessível:** o custo (C2) define o preço; parede dupla a vácuo (C1) e material resistente (C4) encarecem.\n- **Leve para transportar:** o peso (C3) é a própria medida; camadas isolantes (C1) e paredes grossas (C4) somam massa.\n- **Resistente a quedas:** o material (C4) absorve o impacto; garrafa pesada cai com mais força (C3) e a tampa pode se soltar (C6).\n- **Fácil de limpar:** boca larga (C5) permite usar escova; vedação desmontável (C6) facilita tirar resíduos.\n- **Sem vazamentos:** é a função da vedação (C6); quanto maior a boca (C5), mais difícil vedar; trincas no corpo (C4) podem vazar.",
+    "corr": "- C1 × C6 (++): sem tampa bem vedada, o isolamento do corpo perde efeito.\n- C1 × C4 (+): a parede dupla de aço que isola também deixa o corpo mais rígido.\n- C4 × C6 (+): corpo resistente não deforma na queda e a vedação continua encaixada.\n- C1 × C5 (−−): aumentar a abertura reduz a capacidade de isolamento; é o maior conflito do projeto.\n- C2 × C1, C4, C6 (−): mais isolamento, material mais resistente e vedação melhor aumentam o custo.\n- C3 × C1, C4 (−): mais isolamento e paredes mais grossas deixam a garrafa mais pesada.\n- C5 × C6 (−): boca larga exige uma vedação maior e mais difícil de garantir.",
+    "bench": "Oportunidade: nenhum concorrente une a conservação e a vedação do Produto A à resistência do Produto C com preço competitivo. A nova garrafa deve mirar nota 5 nesses requisitos sem chegar ao preço do Produto A.",
+    "prio": "A equipe precisa definir uma abertura que permita a limpeza sem perder calor e escolher materiais que mantenham o preço acessível."
+  }
+}
