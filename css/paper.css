@@ -1,0 +1,105 @@
+/* Casa da Qualidade (QFD) — páginas do PDF e da impressão
+   Cada .pg tem o tamanho exato do papel; as margens ficam no padding da própria página. */
+
+/* Palco onde as páginas são montadas antes de virar PDF (fica invisível) */
+#pdf-stage { position: absolute; left: 0; top: 0; z-index: -1; opacity: 0; pointer-events: none; display: none; }
+#pdf-stage.on { display: block; }
+#print-root { display: none; }
+
+/* Papel sempre no tema claro */
+#pdf-stage, #print-root {
+  --bg: #ffffff; --surface: #ffffff; --ink: #1c2822; --muted: #4f5f57; --line: #8fa69a; --grid: #cfdcd4;
+  --pine: #2e6a4e; --tint: #e9f1ec; --hi: #dcecdf; --hi2: #c6e2cf; --neg: #ad4430;
+  color-scheme: light; color: var(--ink); background: #ffffff;
+}
+
+.pg { box-sizing: border-box; background: #ffffff; display: flex; flex-direction: column; overflow: hidden;
+  font-family: var(--f-body); font-size: 12.5px; line-height: 1.45; color: var(--ink); }
+.pg + .pg { margin-top: 0; }
+
+.ph { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 6mm; align-items: end;
+  border-bottom: 1.2pt solid var(--pine); padding-bottom: 2.4mm; margin-bottom: 4.5mm; }
+.ph-eyebrow { grid-column: 1 / -1; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--pine); margin-bottom: 1mm; }
+.ph-title { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.ph-sub { font-weight: 600; color: var(--muted); }
+.ph-meta { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.ph-fields { grid-column: 1 / -1; display: flex; align-items: flex-end; gap: 2mm; margin-top: 3mm; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.ph-fields i { display: block; flex: 1 1 auto; border-bottom: 0.8pt solid var(--line); height: 4mm; margin-right: 3mm; }
+.ph-fields i.sm { flex: 0 0 26mm; }
+
+.pb { flex: 1 1 auto; min-height: 0; overflow: hidden; display: block !important; margin: 0 !important; }
+.pf { flex: none; display: flex; justify-content: space-between; gap: 6mm; border-top: 0.6pt solid var(--grid); padding-top: 1.6mm; margin-top: 3mm;
+  font-size: 9.5px; color: var(--muted); }
+
+/* Página da casa */
+.pb.house-page { display: flex !important; flex-direction: column; align-items: stretch; }
+.p-house { flex: 1 1 auto; min-height: 0; display: flex; justify-content: center; align-items: flex-start; }
+.p-house img, .p-house svg { display: block; max-width: none; }
+.pf-note { flex: none; margin: 1.5mm 0 0 !important; font-size: 10px !important; color: var(--muted); text-align: center; }
+
+/* Texto corrido */
+.pb > * { margin-top: 0; margin-bottom: 0; }
+.pb > * + * { margin-top: 2.6mm; }
+.pb > h2 { font-size: 16.5px; line-height: 1.25; margin-top: 7mm; }
+.pb > h2:first-child { margin-top: 0; }
+.pb > h2 small { display: block; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--pine); font-weight: 400; margin-bottom: 1mm; }
+.pb > h3 { font-size: 13.5px; margin-top: 4.5mm; }
+.pb > h2 + h3 { margin-top: 2.5mm; }
+.pb > p, .pb li { font-size: 12.5px; max-width: none; }
+.pb .tbl { overflow: visible; margin: 0; }
+.pb > .tbl { margin-top: 1.6mm; }
+.pb table { font-size: 12px; }
+.pb th { font-size: 9.5px; padding: 1.5mm 2mm; }
+.pb td { padding: 1.5mm 2mm; }
+.pb td.f, .pb td.k { font-size: 11px; }
+.pb .pill { font-size: 10.5px; }
+.pb .rel { margin: 0; }
+.pb .rel li { padding: 1.8mm 0; }
+.pb .rel li > span { font-size: 12px; }
+.pb .cards { grid-template-columns: repeat(auto-fit, minmax(52mm, 1fr)); gap: 3mm; margin: 0; }
+.pb .card { padding: 3mm; border-radius: 4px; }
+.pb .card ul { font-size: 12px; }
+.pb .cols2 { grid-template-columns: 1fr 1fr; gap: 6mm; }
+.pb ol.prio { margin: 0; gap: 3.5mm; }
+.pb ol.prio p { font-size: 12.5px; }
+.pb .callout, .pb .notes p, .pb .notes li { font-size: 12px; }
+.pb .notes { margin: 0; padding: 2.5mm 3.5mm; }
+.pb .hint { font-size: 11px; }
+.pb .cont > thead th, .pb .cont thead th { color: var(--muted); }
+.pb .oversize { outline: none; }
+
+/* Enunciado */
+.pb .cap { font-size: 11.5px; font-weight: 600; color: var(--muted); text-align: center; margin-top: 3.5mm; }
+.pb table.stmt-t { width: 78%; margin: 0 auto; border: 0.8pt solid var(--line); }
+.pb table.stmt-t td.k { width: 16mm; }
+.pb table.stmt-t th, .pb table.stmt-t td { border: 0.6pt solid var(--grid); }
+.pb table.stmt-t th { background: var(--tint); color: var(--ink); }
+.pb ol.steps { padding-left: 6mm; display: grid; gap: 1.6mm; margin: 0; }
+.pb ol.steps li::marker { font-family: var(--f-mono); font-weight: 600; color: var(--pine); }
+
+/* Folha de respostas */
+.pb table.ws td { height: 8.5mm; vertical-align: middle; border-bottom: 0.6pt solid var(--grid); }
+.pb table.ws td + td { border-left: 0.6pt solid var(--grid); }
+.pb table.ws .w-imp { width: 18mm; } .pb table.ws .w-calc { width: 52mm; } .pb table.ws .w-pct { width: 18mm; }
+.pb table.ws .w-calc2 { width: 70mm; } .pb table.ws .w-tot { width: 16mm; } .pb table.ws .w-ord { width: 15mm; }
+.pb table.ws tr.total td { border-top: 1.2pt solid var(--line); }
+.lines { display: grid; }
+.lines .ln { height: 8mm; border-bottom: 0.6pt solid var(--line); }
+.pb .ws-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(52mm, 1fr)); gap: 3mm; }
+.pb .ws-cards .card h3 { margin: 0 0 1mm; font-size: 13px; }
+.pb .ws-cards .dt { margin-top: 2mm; }
+.pb ol.ws-prio { gap: 5mm; }
+.ws-field { display: flex; align-items: flex-end; gap: 2mm; font-weight: 600; font-size: 12.5px; }
+.ws-field .ln { flex: 1; height: 7mm; border-bottom: 0.6pt solid var(--line); }
+.ws-lab { font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-top: 2mm; }
+
+@media print {
+  html, body { background: #ffffff !important; }
+  body::before { display: none !important; }
+  .app, #modal, #toast, #busy, #pdf-stage { display: none !important; }
+  #print-root { display: block; }
+  .pg { break-after: page; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pg:last-child { break-after: auto; }
+  .pg.portrait { page: port; }
+  .pg.landscape { page: land; }
+}

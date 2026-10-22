@@ -177,5 +177,50 @@
     "corr": "- C1 × C6 (++): sem tampa bem vedada, o isolamento do corpo perde efeito.\n- C1 × C4 (+): a parede dupla de aço que isola também deixa o corpo mais rígido.\n- C4 × C6 (+): corpo resistente não deforma na queda e a vedação continua encaixada.\n- C1 × C5 (−−): aumentar a abertura reduz a capacidade de isolamento; é o maior conflito do projeto.\n- C2 × C1, C4, C6 (−): mais isolamento, material mais resistente e vedação melhor aumentam o custo.\n- C3 × C1, C4 (−): mais isolamento e paredes mais grossas deixam a garrafa mais pesada.\n- C5 × C6 (−): boca larga exige uma vedação maior e mais difícil de garantir.",
     "bench": "Oportunidade: nenhum concorrente une a conservação e a vedação do Produto A à resistência do Produto C com preço competitivo. A nova garrafa deve mirar nota 5 nesses requisitos sem chegar ao preço do Produto A.",
     "prio": "A equipe precisa definir uma abertura que permita a limpeza sem perder calor e escolher materiais que mantenham o preço acessível."
+  },
+  "statement": {
+    "title": "Construção da Casa da Qualidade (QFD)",
+    "context": "Uma indústria de eletrodomésticos pretende desenvolver uma nova garrafa térmica reutilizável, destinada a consumidores que buscam praticidade, durabilidade e conservação da temperatura das bebidas.\n\nAntes de iniciar o desenvolvimento do produto, a empresa realizou uma pesquisa de mercado para identificar as principais necessidades dos consumidores.\n\nOs resultados foram organizados na tabela a seguir.",
+    "charIntro": "A equipe de engenharia identificou seis características técnicas que poderão ser utilizadas no desenvolvimento do produto.",
+    "benchIntro": "A empresa também avaliou três produtos concorrentes em relação a cada necessidade dos clientes.",
+    "task": "Com base nas informações apresentadas, construa a Casa da Qualidade (QFD) para orientar o desenvolvimento da nova garrafa. Para isso, realize as seguintes etapas:",
+    "steps": [
+      {
+        "id": "e1",
+        "text": "Organize os requisitos dos clientes e suas respectivas importâncias na matriz."
+      },
+      {
+        "id": "e2",
+        "text": "Calcule o percentual de importância de cada requisito, considerando a soma das importâncias."
+      },
+      {
+        "id": "e3",
+        "text": "Insira as características técnicas do produto nas colunas correspondentes."
+      },
+      {
+        "id": "e4",
+        "text": "Preencha a matriz de relacionamentos, atribuindo a contribuição de cada característica técnica para cada requisito, com a escala forte = 9, média = 3 e fraca = 1."
+      },
+      {
+        "id": "e5",
+        "text": "Calcule a importância de cada característica técnica: multiplique a importância de cada requisito pelo valor do relacionamento e some os resultados."
+      },
+      {
+        "id": "e6",
+        "text": "Calcule o percentual de importância de cada característica técnica em relação à soma das importâncias técnicas."
+      },
+      {
+        "id": "e7",
+        "text": "Preencha o telhado da Casa da Qualidade, indicando as correlações positivas e negativas entre as características técnicas."
+      },
+      {
+        "id": "e8",
+        "text": "Analise o benchmarking competitivo e identifique os pontos fortes e fracos de cada concorrente."
+      },
+      {
+        "id": "e9",
+        "text": "Indique as três características técnicas prioritárias para o desenvolvimento do produto e justifique."
+      }
+    ]
   }
 }

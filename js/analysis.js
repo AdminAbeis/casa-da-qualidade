@@ -6,7 +6,7 @@
   function inline(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
 
   /* Comentários livres: linhas com "- " viram lista, **texto** vira negrito */
-  Q.notesHTML = function (text) {
+  Q.richText = function (text) {
     const t = String(text || '').trim();
     if (!t) return '';
     let out = '', list = [], para = [];
@@ -22,7 +22,11 @@
       else { if (list.length) flush(); para.push(l); }
     });
     flush();
-    return '<div class="notes"><div class="notes-h">Comentários</div>' + out + '</div>';
+    return out;
+  };
+  Q.notesHTML = function (text) {
+    const out = Q.richText(text);
+    return out ? '<div class="notes"><div class="notes-h">Comentários</div>' + out + '</div>' : '';
   };
 
   function sec(id, eyebrow, title, body) {
@@ -206,6 +210,69 @@
     if (conflicts.length) body += '<p class="callout">Atenção de projeto: as prioridades têm correlação negativa em ' + joinPt(conflicts) + '. Esses pontos exigem uma solução de compromisso.</p>';
     body += Q.notesHTML(s.notes.prio);
     return sec('item-9', 'Item 9', title, body);
+  };
+
+  /* ---------- enunciado ---------- */
+  Q.secEnunciado = function (s, paper) {
+    const st = s.statement, sc = s.scale;
+    let h = '';
+    if (st.context.trim()) h += '<h3>Situação-problema</h3>' + Q.richText(st.context);
+    if (s.reqs.length) {
+      h += '<p class="cap" data-keep="1">Tabela 1 – Necessidades dos clientes</p><div class="tbl"><table class="stmt-t"><thead><tr><th>Requisitos dos clientes</th><th class="n">Importância (1 a ' + sc.impMax + ')</th></tr></thead><tbody>' +
+        s.reqs.map(function (r) { return '<tr><td>' + esc(r.name || 'Sem nome') + '</td><td class="n">' + r.imp + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    }
+    if (st.charIntro.trim()) h += Q.richText(st.charIntro).replace('<p>', '<p data-keep="1">');
+    if (s.chars.length) {
+      h += '<p class="cap" data-keep="1">Tabela 2 – Características técnicas do produto</p><div class="tbl"><table class="stmt-t"><thead><tr><th>Código</th><th>Característica técnica</th></tr></thead><tbody>' +
+        s.chars.map(function (ch, j) { return '<tr><td class="k">' + code(j) + '</td><td>' + esc(ch.name || 'Sem nome') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    }
+    if (s.comps.length && s.reqs.length) {
+      if (st.benchIntro.trim()) h += Q.richText(st.benchIntro).replace('<p>', '<p data-keep="1">');
+      h += '<p class="cap" data-keep="1">Tabela 3 – Benchmarking competitivo (notas de 1 a ' + sc.benchMax + ')</p><div class="tbl"><table class="stmt-t"><thead><tr><th>Requisito</th>' +
+        s.comps.map(function (k) { return '<th class="n">' + esc(k.name || 'Sem nome') + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        s.reqs.map(function (r) {
+          return '<tr><td>' + esc(r.name || 'Sem nome') + '</td>' + s.comps.map(function (k) { const v = Q.benchNote(s, r.id, k.id); return '<td class="n">' + (v == null ? '' : v) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    if (st.task.trim() || st.steps.length) {
+      h += '<h3>Atividade proposta</h3>' + Q.richText(st.task);
+      if (st.steps.length) h += '<ol class="steps">' + st.steps.map(function (e) { return '<li>' + esc(e.text) + '</li>'; }).join('') + '</ol>';
+    }
+    if (paper) return '<section class="sec stmt">' + h + '</section>';
+    return '<section class="sec stmt" id="enunciado"><h2><small>Enunciado</small>' + esc(st.title || s.meta.title || 'Exercício') + '</h2>' + h + '</section>';
+  };
+
+  /* ---------- folhas de resposta em branco ---------- */
+  function lines(n) { let h = '<div class="lines">'; for (let i = 0; i < n; i++) h += '<div class="ln"></div>'; return h + '</div>'; }
+  Q.renderWorksheet = function (s) {
+    let h = '';
+    if (s.reqs.length) {
+      h += sec('ws-1', 'Etapas 1 e 2', 'Percentual de importância dos requisitos',
+        '<div class="tbl"><table class="ws"><thead><tr><th></th><th>Requisito do cliente</th><th class="n w-imp">Importância</th><th class="w-calc">Cálculo</th><th class="n w-pct">%</th></tr></thead><tbody>' +
+        s.reqs.map(function (r, i) { return '<tr><td class="k">R' + (i + 1) + '</td><td>' + esc(r.name || 'Sem nome') + '</td><td></td><td></td><td></td></tr>'; }).join('') +
+        '<tr class="total"><td></td><td>Total</td><td></td><td></td><td></td></tr></tbody></table></div>');
+    }
+    if (s.chars.length) {
+      h += sec('ws-2', 'Etapas 5 e 6', 'Importância das características técnicas',
+        '<div class="tbl"><table class="ws"><thead><tr><th></th><th>Característica técnica</th><th class="w-calc2">Cálculo</th><th class="n w-tot">Total</th><th class="n w-pct">%</th><th class="n w-ord">Ordem</th></tr></thead><tbody>' +
+        s.chars.map(function (ch, j) { return '<tr><td class="k">' + code(j) + '</td><td>' + esc(ch.name || 'Sem nome') + '</td><td></td><td></td><td></td><td></td></tr>'; }).join('') +
+        '<tr class="total"><td></td><td>Total</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>');
+    }
+    if (s.chars.length >= 2) {
+      h += sec('ws-3', 'Etapa 7', 'Telhado: correlações entre as características',
+        '<div class="cols2"><div><h3>Correlações positivas</h3>' + lines(5) + '</div><div><h3>Correlações negativas (conflitos)</h3>' + lines(5) + '</div></div>');
+    }
+    if (s.comps.length) {
+      h += sec('ws-4', 'Item 8', 'Benchmarking competitivo: pontos fortes e fracos',
+        '<div class="ws-cards">' + s.comps.map(function (k) {
+          return '<div class="card"><h3>' + esc(k.name || 'Sem nome') + '</h3><div class="dt">Pontos fortes</div>' + lines(3) + '<div class="dt w">Pontos fracos</div>' + lines(3) + '</div>';
+        }).join('') + '</div><h3 class="sub">Conclusão</h3>' + lines(3));
+    }
+    const N = s.settings.topN;
+    let items = '';
+    for (let i = 0; i < N; i++) items += '<li><div class="ws-field"><span>Característica:</span><div class="ln"></div></div><div class="ws-lab">Justificativa</div>' + lines(3) + '</li>';
+    h += sec('ws-5', 'Item 9', N === 1 ? 'A característica técnica prioritária' : 'As ' + N + ' características técnicas prioritárias', '<ol class="prio ws-prio">' + items + '</ol>');
+    return h;
   };
 
   Q.renderAnalysis = function (s, c, which) {

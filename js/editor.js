@@ -94,7 +94,27 @@
       return '<label class="fld" for="note-' + a[0] + '"><span>' + esc(a[1]) + '</span><textarea id="note-' + a[0] + '" data-note="' + a[0] + '" rows="4">' + esc(s.notes[a[0]]) + '</textarea></label>';
     }).join('') + '<p class="cols-hint">Linhas que começam com “- ” viram lista; **texto** fica em negrito. Os comentários entram no PDF.</p>';
 
+    const st = s.statement;
+    const stf = function (key, label, rows, ph) {
+      return '<label class="fld" for="st-' + key + '"><span>' + esc(label) + '</span><textarea id="st-' + key + '" data-stmt="' + key + '" rows="' + rows + '" placeholder="' + esc(ph || '') + '">' + esc(st[key]) + '</textarea></label>';
+    };
+    const stmt =
+      '<label class="fld" for="st-title"><span>Título do exercício</span><input id="st-title" data-stmt="title" value="' + esc(st.title) + '" placeholder="Ex.: Construção da Casa da Qualidade (QFD)"></label>' +
+      stf('context', 'Situação-problema (aparece antes da Tabela 1)', 6, 'Descreva o produto, o público e a pesquisa feita.') +
+      stf('charIntro', 'Texto antes da Tabela 2 (características)', 2) +
+      stf('benchIntro', 'Texto antes da Tabela 3 (benchmarking)', 2) +
+      stf('task', 'Atividade proposta', 3, 'Com base nas informações apresentadas…') +
+      '<div class="fld"><span>Etapas e regras do exercício</span></div>' +
+      '<div class="rows">' + st.steps.map(function (e, i) {
+        return '<div class="row"><span class="tag">' + (i + 1) + '.</span>' +
+          '<textarea class="nm" rows="1" id="step-text-' + e.id + '" data-step="' + e.id + '" placeholder="Descreva a etapa" aria-label="Etapa ' + (i + 1) + '">' + esc(e.text) + '</textarea>' +
+          actions('steps', e.id, i, st.steps.length, 'etapa ' + (i + 1)).replace('<div class="row-actions">', '<div class="row-actions span2">') + '</div>';
+      }).join('') + '</div>' +
+      '<button type="button" class="add" data-add="steps">+ Adicionar etapa</button>' +
+      '<p class="cols-hint">As Tabelas 1, 2 e 3 são montadas com os requisitos, as características e as notas cadastrados. O enunciado entra no PDF do exercício em branco e, se você quiser, no da resolução.</p>';
+
     return pane('projeto', 'Projeto', null, proj, isOpen('projeto', false)) +
+      pane('stmt', 'Enunciado do exercício', st.steps.length || null, stmt, isOpen('stmt', false)) +
       pane('reqs', 'Requisitos do cliente', s.reqs.length, reqs, isOpen('reqs', true)) +
       pane('chars', 'Características técnicas', s.chars.length, chars, isOpen('chars', true)) +
       pane('comps', 'Concorrentes', s.comps.length, comps, isOpen('comps', false)) +

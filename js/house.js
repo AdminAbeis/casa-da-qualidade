@@ -40,7 +40,8 @@
 
   Q.renderHouse = function (s, c, opts) {
     opts = opts || {};
-    const act = !!opts.interactive;
+    const blank = !!opts.blank, given = !!opts.given;
+    const act = !!opts.interactive && !blank;
     const P = { LW: 240, IW: 52, PW: 62, w: 64, bh: 36, pad: 10, top: 28 };
     const n = s.reqs.length, m = s.chars.length, K = s.comps.length;
     const w = P.w;
@@ -90,7 +91,7 @@
     rect(xL, yR, xe - xL, yH - yR + 30, 'tint');
     rect(xL, yB, xe - xL, yEnd - yB, 'tint');
     s.chars.forEach(function (ch, j) {
-      if (!c.isTop[j]) return;
+      if (blank || !c.isTop[j]) return;
       rect(x0 + j * w, yD, w, yB - yD, 'hi');
       rect(x0 + j * w, yB, w, yEnd - yB, 'hi2');
     });
@@ -103,7 +104,7 @@
           const cx = x0 + (i + j + 1) * w / 2, cy = yR - (j - i) * w / 2, h = w / 2;
           const pts = cx + ',' + (cy - h) + ' ' + (cx + h) + ',' + cy + ' ' + cx + ',' + (cy + h) + ' ' + (cx - h) + ',' + cy;
           o.push('<polygon points="' + pts + '" class="dia"/>');
-          const v = Q.corrOf(s, s.chars[i].id, s.chars[j].id);
+          const v = blank ? '' : Q.corrOf(s, s.chars[i].id, s.chars[j].id);
           if (v) t(cx, cy + 6, Q.CORR_SYM[v], v.indexOf('+') >= 0 ? 'pos' : 'neg');
         }
       }
@@ -140,7 +141,7 @@
       const L = charLines[j];
       L.forEach(function (ln, k) { vt(cx - (L.length - 1) * 7.5 + k * 15 + 4, yH - 10, ln, 'vh'); });
       const d = Q.DIRS[ch.dir] || Q.DIRS.none;
-      t(cx, yD - 9, d.sym, 'dir');
+      if (!blank) t(cx, yD - 9, d.sym, 'dir');
     });
     if (!m) t(x0 + mw / 2, yR + hH / 2, 'Adicione características', 'empty');
     t(x0 - 8, yD - 9, 'Sentido de melhoria', 'lg', 'end');
@@ -161,6 +162,14 @@
       const y = rowY[i], h = rowH[i], cy = y + h / 2;
       const L = reqLines[i];
       L.forEach(function (ln, k) { t(xL + 10, cy + 5 - (L.length - 1) * 8 + k * 16, ln, 'rq', 'start'); });
+      if (blank) {
+        if (given) t(xi + P.IW / 2, cy + 6, r.imp, 'num b');
+        if (given) s.comps.forEach(function (k, ki) {
+          const v = Q.benchNote(s, r.id, k.id);
+          if (v != null) t(xb + ki * bw + bw / 2, cy + 6, v, 'num');
+        });
+        return;
+      }
       t(xi + P.IW / 2, cy + 6, r.imp, 'num b');
       t(xp + P.PW / 2, cy + 5, Q.fmt(c.reqPct[i], 2), 'num');
       s.chars.forEach(function (ch, j) {
@@ -184,6 +193,7 @@
     ['Importância da característica', 'Percentual de importância', 'Prioridade'].forEach(function (lab, k) {
       const cy = yB + k * P.bh + P.bh / 2 + 5;
       t(x0 - 10, cy, lab, 'bl', 'end');
+      if (blank) return;
       s.chars.forEach(function (ch, j) {
         const cx = x0 + j * w + w / 2;
         if (k === 0) t(cx, cy, Q.fmt(c.charTotal[j]), 'num b');
@@ -194,9 +204,15 @@
     if (K) {
       const cxb = xb + K * bw / 2;
       t(cxb, yB + P.bh / 2 - 2, 'Σ importância × nota', 'lg');
-      s.comps.forEach(function (k, ki) { t(xb + ki * bw + bw / 2, yB + P.bh / 2 + 14, Q.fmt(c.benchWeighted[ki]), 'num b'); });
-      t(cxb, yB + P.bh * 1.5 + 5, 'Σ importância = ' + Q.fmt(c.impSum), 'lg');
-      t(cxb, yB + P.bh * 2.5 + 5, 'Σ características = ' + Q.fmt(c.charSum), 'lg');
+      if (blank) {
+        for (let k = 1; k < K; k++) line(xb + k * bw, yB + P.bh / 2 + 2, xb + k * bw, yB + P.bh, 'g');
+        t(xb + 8, yB + P.bh * 1.5 + 5, 'Σ importância =', 'lg', 'start');
+        t(xb + 8, yB + P.bh * 2.5 + 5, 'Σ características =', 'lg', 'start');
+      } else {
+        s.comps.forEach(function (k, ki) { t(xb + ki * bw + bw / 2, yB + P.bh / 2 + 14, Q.fmt(c.benchWeighted[ki]), 'num b'); });
+        t(cxb, yB + P.bh * 1.5 + 5, 'Σ importância = ' + Q.fmt(c.impSum), 'lg');
+        t(cxb, yB + P.bh * 2.5 + 5, 'Σ características = ' + Q.fmt(c.charSum), 'lg');
+      }
     }
 
     /* Grade */
@@ -240,7 +256,7 @@
       });
     }
 
-    const style = opts.standalone ? '<style>' + STANDALONE_CSS + '</style><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>' : '';
+    const style = opts.standalone ? '<style>' + (opts.embedFonts && Q.fontFaceCSS ? Q.fontFaceCSS(['Archivo Narrow', 'IBM Plex Mono']) : '') + STANDALONE_CSS + '</style><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>' : '';
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + (opts.cssW || W) + '" height="' + (opts.cssH || H) +
       '" role="img" aria-label="Casa da Qualidade: ' + esc(s.meta.title) + '" class="house-svg">' + style + o.join('') + '</svg>';
     return { svg: svg, width: W, height: H };

@@ -38,6 +38,11 @@ window.QFD = window.QFD || {};
   Q.CORR_SYM = { '++': '++', '+': '+', '-': '−', '--': '−−' };
   Q.CORR_CYCLE = ['', '++', '+', '-', '--'];
 
+  Q.hasStatement = function (s) {
+    const t = s.statement;
+    return !!(t && (t.title.trim() || t.context.trim() || t.task.trim() || t.steps.length));
+  };
+
   Q.PAPERS = {
     A4: { w: 210, h: 297, label: 'A4 · 210 × 297 mm' },
     A3: { w: 297, h: 420, label: 'A3 · 297 × 420 mm' },
@@ -56,7 +61,8 @@ window.QFD = window.QFD || {};
       settings: { topN: 3 },
       reqs: [], chars: [], comps: [],
       rel: {}, corr: {}, bench: {},
-      notes: { rel: '', corr: '', bench: '', prio: '' }
+      notes: { rel: '', corr: '', bench: '', prio: '' },
+      statement: { title: '', context: '', charIntro: '', benchIntro: '', task: '', steps: [] }
     };
     if (withPlaceholders) {
       for (let i = 1; i <= 3; i++) s.reqs.push({ id: Q.uid('r'), name: 'Requisito do cliente ' + i, imp: 3 });
@@ -137,6 +143,26 @@ window.QFD = window.QFD || {};
       bench: 'Oportunidade: nenhum concorrente une a conservação e a vedação do Produto A à resistência do Produto C com preço competitivo. A nova garrafa deve mirar nota 5 nesses requisitos sem chegar ao preço do Produto A.',
       prio: 'A equipe precisa definir uma abertura que permita a limpeza sem perder calor e escolher materiais que mantenham o preço acessível.'
     };
+    s.statement = {
+      title: 'Construção da Casa da Qualidade (QFD)',
+      context: 'Uma indústria de eletrodomésticos pretende desenvolver uma nova garrafa térmica reutilizável, destinada a consumidores que buscam praticidade, durabilidade e conservação da temperatura das bebidas.\n\n' +
+        'Antes de iniciar o desenvolvimento do produto, a empresa realizou uma pesquisa de mercado para identificar as principais necessidades dos consumidores.\n\n' +
+        'Os resultados foram organizados na tabela a seguir.',
+      charIntro: 'A equipe de engenharia identificou seis características técnicas que poderão ser utilizadas no desenvolvimento do produto.',
+      benchIntro: 'A empresa também avaliou três produtos concorrentes em relação a cada necessidade dos clientes.',
+      task: 'Com base nas informações apresentadas, construa a Casa da Qualidade (QFD) para orientar o desenvolvimento da nova garrafa. Para isso, realize as seguintes etapas:',
+      steps: [
+        'Organize os requisitos dos clientes e suas respectivas importâncias na matriz.',
+        'Calcule o percentual de importância de cada requisito, considerando a soma das importâncias.',
+        'Insira as características técnicas do produto nas colunas correspondentes.',
+        'Preencha a matriz de relacionamentos, atribuindo a contribuição de cada característica técnica para cada requisito, com a escala forte = 9, média = 3 e fraca = 1.',
+        'Calcule a importância de cada característica técnica: multiplique a importância de cada requisito pelo valor do relacionamento e some os resultados.',
+        'Calcule o percentual de importância de cada característica técnica em relação à soma das importâncias técnicas.',
+        'Preencha o telhado da Casa da Qualidade, indicando as correlações positivas e negativas entre as características técnicas.',
+        'Analise o benchmarking competitivo e identifique os pontos fortes e fracos de cada concorrente.',
+        'Indique as três características técnicas prioritárias para o desenvolvimento do produto e justifique.'
+      ].map(function (t, i) { return { id: 'e' + (i + 1), text: t }; })
+    };
     return s;
   };
 
@@ -209,6 +235,12 @@ window.QFD = window.QFD || {};
     });
     const n = raw.notes || {};
     s.notes = { rel: String(n.rel || ''), corr: String(n.corr || ''), bench: String(n.bench || ''), prio: String(n.prio || '') };
+    const st = raw.statement || {};
+    s.statement = {
+      title: String(st.title || ''), context: String(st.context || ''), charIntro: String(st.charIntro || ''),
+      benchIntro: String(st.benchIntro || ''), task: String(st.task || ''),
+      steps: list(st.steps, 'e', function (x, id) { return { id: id, text: String(x.text || '') }; })
+    };
     return s;
   };
 
